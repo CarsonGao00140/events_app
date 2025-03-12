@@ -1,6 +1,6 @@
 import SwiftUI 
 
-struct Attendee: Identifiable {
+struct Attendee: Identifiable, Equatable {
     let id = UUID()
     let firstName: String
     let lastName: String

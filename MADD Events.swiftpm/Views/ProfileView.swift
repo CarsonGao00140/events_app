@@ -2,14 +2,10 @@ import SwiftUI
 
 struct ProfileView: View {
     @Binding var user: Attendee?
-    @State var firstName: String = ""
-    @State var lastName: String = ""
-    @State var avatar: Image? = nil
-    @State var isPresented: Bool = true
-    @State var clearForm: (() -> Void)? = nil
-    
-    @State var clearProfile: (() -> Void)? = nil
-    
+    @State private var firstName: String = ""
+    @State private var lastName: String = ""
+    @State private var avatar: Image? = nil
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
@@ -41,6 +37,13 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
             .padding()
+            .onChange(of: user) {
+                if let user = user {
+                    firstName = user.firstName
+                    lastName = user.lastName
+                    avatar = user.avatar
+                }
+            }
         }
     }
 }

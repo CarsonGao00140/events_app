@@ -9,7 +9,7 @@ struct ContentView: View {
                 EventsView(user: $user)
             }
             Tab("Profile", systemImage: "person.crop.circle") {
-//                ProfileView(user: $user)
+                ProfileView(user: $user)
             }
             .badge(user == nil ? Text("!"): nil)
         }

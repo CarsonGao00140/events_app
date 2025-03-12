@@ -6,7 +6,8 @@ struct AttendeeFormView: View {
     @Binding var lastName: String
     @Binding var avatar: Image?
     @Binding var isPresented: Bool
-    var onChange: (() -> Void) = {}
+    var onChange: (() -> Void)?
+    var onDone: ((String, String, Image?) -> Void)?
     
     @State private var picked: PhotosPickerItem?
 
@@ -51,10 +52,18 @@ struct AttendeeFormView: View {
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel", role: .destructive) {
                         isPresented = false
                     }
+                    .foregroundColor(.red)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        onDone?(firstName, lastName, avatar)
+                        isPresented = false
+                    }
+                    .disabled(firstName.isEmpty || lastName.isEmpty || avatar == nil)
                 }
             }
             .padding()
@@ -65,9 +74,9 @@ struct AttendeeFormView: View {
                     }
                 }
             }
-            .onChange(of: firstName, onChange)
-            .onChange(of: lastName, onChange)
-            .onChange(of: avatar, onChange)
+            .onChange(of: firstName, onChange ?? {})
+            .onChange(of: lastName, onChange ?? {})
+            .onChange(of: avatar, onChange ?? {})
         }
     }
 }
@@ -84,6 +93,9 @@ struct AttendeeFormView: View {
         isPresented: .constant(true),
         onChange: {
             print("Change")
+        },
+        onDone: { _, _, _ in
+            print("Done")
         }
     )
 }
