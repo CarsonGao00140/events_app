@@ -3,6 +3,7 @@ import SwiftUI
 struct EventFormView: View {
     @Binding var user: Attendee?
     @Binding var isPresented: Bool
+    @State var isAttendeeFormPresented = false
     @State var attendees: [Attendee] = []
     @State var name: String = ""
     @State var location: String = ""
@@ -22,6 +23,10 @@ struct EventFormView: View {
         avatar: Image(systemName: "person.circle"),
         isHost: false
     )
+    
+    private func edit() {
+        isAttendeeFormPresented = true
+    }
     
     private func toggleHost(_ attendee: Attendee) {
         if let index = attendees.firstIndex(where: { $0.id == attendee.id }) {
@@ -50,12 +55,13 @@ struct EventFormView: View {
                     ForEach(attendees.filter { $0.isHost }) { attendee in
                         let hasMultipleHosts = attendees.filter({ $0.isHost }).count > 1
                         Text(attendee.firstName)
+                            .onTapGesture(perform: edit)
                             .swipeActions(edge: .leading) {
                                 if hasMultipleHosts {
                                     Button {
                                         toggleHost(attendee)
                                     } label: {
-                                        Label("Set Host", systemImage: "person.slash.fill")
+                                        Label("Remove from Host", systemImage: "person.slash.fill")
                                     }
                                     .tint(.blue)
                                 }
@@ -75,11 +81,12 @@ struct EventFormView: View {
                 Section {
                     ForEach(attendees.filter { !$0.isHost }) { attendee in
                         Text(attendee.firstName)
+                            .onTapGesture(perform: edit)
                             .swipeActions(edge: .leading) {
                                 Button {
                                     toggleHost(attendee)
                                 } label: {
-                                    Label("Set Host", systemImage: "person.fill")
+                                    Label("Set as Host", systemImage: "person.fill")
                                 }
                                 .tint(.blue)
                             }
@@ -106,8 +113,19 @@ struct EventFormView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Save") {}
+                    Button("Save") {}
                 }
+            }
+            .sheet(isPresented: $isAttendeeFormPresented) {
+                NavigationView {
+                    AttendeeFormView(
+                        onChange: { firstName, lastName, avatar in
+                            print("First Name:", firstName, "Last Name:", lastName, "Avatar:", String(describing: avatar))
+                        },
+                        clear: .constant({}),
+                        isPresented: $isAttendeeFormPresented
+                    )
+               }
             }
         }
         .onAppear {
@@ -120,7 +138,7 @@ struct EventFormView: View {
     let user = Attendee(
         firstName: "Carson",
         lastName: "Gao",
-        avatar: Image(systemName: "person.circle"),
+        avatar: Image(systemName: "person.crop.circle.dashed"),
         isHost: true
     )
         

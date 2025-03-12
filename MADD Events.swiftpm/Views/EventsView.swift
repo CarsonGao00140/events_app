@@ -2,7 +2,7 @@ import SwiftUI
 
 struct EventsView: View {
     @Binding var user: Attendee?
-    @State var showEventForm = false
+    @State var isEventFormPresented = false
     
     var body: some View {
         NavigationStack {
@@ -13,7 +13,7 @@ struct EventsView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        showEventForm = true
+                        isEventFormPresented = true
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -21,9 +21,9 @@ struct EventsView: View {
                 }
             }
             .padding()
-            .sheet(isPresented: $showEventForm) {
+            .sheet(isPresented: $isEventFormPresented) {
                 NavigationView {
-                    EventFormView(user: $user, isPresented: $showEventForm)
+                    EventFormView(user: $user, isPresented: $isEventFormPresented)
                }
             }
         }
@@ -34,7 +34,7 @@ struct EventsView: View {
     let user = Attendee(
         firstName: "Carson",
         lastName: "Gao",
-        avatar: Image(systemName: "person.circle"),
+        avatar: Image(systemName: "person.crop.circle.dashed"),
         isHost: true
     )
         
