@@ -133,6 +133,9 @@ struct AttendeeListView: View {
                     )
                 }
             }
+            .onDisappear {
+                selectedAttendee = nil
+            }
         }
     }
 }

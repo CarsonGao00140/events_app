@@ -25,6 +25,7 @@ struct ProfileView: View {
                             : nil
                     }
                 )
+                
                 Button("Clear", role: .destructive, action: clearForm ?? {})
                     .padding()
             }
