@@ -2,23 +2,13 @@ import SwiftUI
 import PhotosUI
 
 struct AttendeeFormView: View {
-    let onChange: (String, String, Image?) -> Void
-    @Binding var clear: (() -> Void)?
+    @Binding var firstName: String
+    @Binding var lastName: String
+    @Binding var avatar: Image?
     @Binding var isPresented: Bool
-    @State var firstName: String = ""
-    @State var lastName: String = ""
-    @State var avatar: Image? = nil
-    @State var picked: PhotosPickerItem?
-
-    private func change() {
-        onChange(firstName, lastName, avatar)
-    }
+    var onChange: (() -> Void) = {}
     
-    private func clearAction() {
-        firstName = ""
-        lastName = ""
-        avatar = nil
-    }
+    @State private var picked: PhotosPickerItem?
 
     var body: some View {
         NavigationView {
@@ -66,17 +56,8 @@ struct AttendeeFormView: View {
                         isPresented = false
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {}
-                }
             }
             .padding()
-            .onAppear{
-                clear = clearAction
-            }
-            .onChange(of: firstName, change)
-            .onChange(of: lastName, change)
-            .onChange(of: avatar, change)
             .onChange(of: picked) {
                 Task {
                     if let loaded = try? await picked?.loadTransferable(type: Image.self) {
@@ -84,22 +65,25 @@ struct AttendeeFormView: View {
                     }
                 }
             }
+            .onChange(of: firstName, onChange)
+            .onChange(of: lastName, onChange)
+            .onChange(of: avatar, onChange)
         }
     }
 }
 
 #Preview {
-    @Previewable @State var clearForm: (() -> Void)? = nil
+    @Previewable @State var firstName: String = ""
+    @Previewable @State var lastName: String = ""
+    @Previewable @State var avatar: Image? = nil
     
-    return Group {
-        AttendeeFormView(
-            onChange: { firstName, lastName, avatar in
-                print("First Name: ", firstName, "Last Name: ", lastName, "Avatar: ", String(describing: avatar))
-            },
-            clear: $clearForm,
-            isPresented: .constant(true)
-        )
-        
-        Button("🛠️ Clear", action: clearForm ?? {})
-    }
+    AttendeeFormView(
+        firstName: $firstName,
+        lastName: $lastName,
+        avatar: $avatar,
+        isPresented: .constant(true),
+        onChange: {
+            print("Change")
+        }
+    )
 }
