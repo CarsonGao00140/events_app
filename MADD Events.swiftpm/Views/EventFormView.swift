@@ -92,7 +92,7 @@ struct EventFormView: View {
             attendees: [user],
             isPresented: .constant(true),
             onSubmit: { name, startDate, endDate, location, note, attendees in
-                print("Submit: \(name), \(startDate), \(endDate), \(location), \(note), \(attendees)")
+                print("Submit: \(name), \(startDate), \(String(describing: endDate)), \(location), \(note), \(attendees)")
             }
         )
     }

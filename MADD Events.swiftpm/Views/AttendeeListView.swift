@@ -8,12 +8,12 @@ struct AttendeeListView: View {
     @State private var isAttendeeFormPresented = false
     
     private func add(firstName: String, lastName: String, avatar: Image) {
-        let newAttendee = Attendee(
+        let attendee = Attendee(
             firstName: firstName,
             lastName: lastName,
             avatar: avatar,
             isHost: false)
-        attendees.append(newAttendee)
+        attendees.append(attendee)
     }
     
     private func edit(attendee: Attendee) {
@@ -123,12 +123,12 @@ struct AttendeeListView: View {
                         clear: .constant(nil),
                         isPresented: $isAttendeeFormPresented,
                         onSubmit: { firstName, lastName, avatar in
-                            let newAttendee = Attendee(
+                            let attendee = Attendee(
                                 firstName: firstName,
                                 lastName: lastName,
                                 avatar: avatar,
                                 isHost: false)
-                            attendees.append(newAttendee)
+                            attendees.append(attendee)
                         }
                     )
                 }
@@ -141,7 +141,7 @@ struct AttendeeListView: View {
 }
 
 #Preview{
-    @Previewable @State var attendees: [Attendee] = [
+    @Previewable @State var attendees = [
         Attendee(
             firstName: "User",
             lastName: "1",

@@ -1,42 +1,37 @@
 import SwiftUI
 
 struct EventsView: View {
-    @Binding var user: Attendee?
+    @State var events: [Event]
     @State var isEventFormPresented = false
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                
+            Form {
+                EventListView(events: $events)
             }
             .navigationTitle("Events")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        isEventFormPresented = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .disabled(user == nil)
-                }
-            }
             .padding()
-            .sheet(isPresented: $isEventFormPresented) {
-                NavigationView {
-//                    EventFormView(user: $user, isPresented: $isEventFormPresented)
-               }
-            }
         }
     }
 }
 
 #Preview{
-    let user = Attendee(
-        firstName: "Carson",
-        lastName: "Gao",
-        avatar: Image(systemName: "person.crop.circle.dashed"),
-        isHost: true
-    )
+    @Previewable @State var events = [
+        Event(name: "Demo",
+            startDate: Date(),
+            endDate: nil,
+            location: "Ottawa",
+            note: "Some Describition...",
+            attendees: [
+                Attendee(
+                    firstName: "User",
+                    lastName: "1",
+                    avatar: Image(systemName: "1.circle"),
+                    isHost: true
+                )
+            ],
+            isCancelled: false)
+    ]
         
-    EventsView(user: .constant(user))
+    EventsView(events: events)
 }
