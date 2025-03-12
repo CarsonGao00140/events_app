@@ -108,10 +108,10 @@ struct AttendeeFormView: View {
         clear: $clearForm,
         isPresented: .constant(true),
         onChange: { firstName, lastName, avatar, complete in
-            print("Change: \(firstName), \(lastName), \(avatar), \(complete)")
+            print("Change: \(firstName), \(lastName), \(String(describing: avatar)), \(complete)")
         },
         onSubmit: { firstName, lastName, avatar in
-            print("Change: \(firstName), \(lastName), \(avatar)")
+            print("Change: \(firstName), \(lastName), \(String(describing: avatar))")
         }
     )
     Button("🛠️ Clear", action: clearForm ?? {})

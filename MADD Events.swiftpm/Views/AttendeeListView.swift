@@ -1,10 +1,3 @@
-//
-//  AttendeeListView.swift
-//  MADD Events
-//
-//  Created by Carson Gao on 2025-03-12.
-//
-
 import SwiftUI
 
 struct AttendeeListView: View {
@@ -12,9 +5,6 @@ struct AttendeeListView: View {
     
     @State private var selectedAttendee: Attendee?
     @State private var isAttendeeFormPresented = false
-    @State private var firstName = ""
-    @State private var lastName = ""
-    @State private var avatar: Image? = nil
     
     private func edit(attendee: Attendee) {
         selectedAttendee = attendee
@@ -73,6 +63,9 @@ struct AttendeeListView: View {
                 }
             }
             Section() {
+                Button("New Attendee", action: {
+                    isAttendeeFormPresented = true
+                })
                 ForEach(nonHosts) { attendee in
                     Text("\(attendee.firstName) \(attendee.lastName)")
                         .onTapGesture {
@@ -98,12 +91,35 @@ struct AttendeeListView: View {
         }
         .sheet(isPresented: $isAttendeeFormPresented) {
             if let index = attendees.firstIndex(where: { $0.id == selectedAttendee?.id }) {
-//                AttendeeFormView(
-//                    firstName: $attendees[index].firstName,
-//                    lastName: $attendees[index].lastName,
-//                    avatar: $attendees[index].avatar,
-//                    isPresented: $isAttendeeFormPresented
-//                )
+                AttendeeFormView(
+                    firstName: attendees[index].firstName,
+                    lastName: attendees[index].lastName,
+                    avatar: attendees[index].avatar,
+                    clear: .constant(nil),
+                    isPresented: $isAttendeeFormPresented,
+                    onSubmit: { firstName, lastName, avatar in
+                        attendees[index] = Attendee(
+                            firstName: firstName,
+                            lastName: lastName,
+                            avatar: avatar,
+                            isHost: attendees[index].isHost)
+                    }
+                )
+            } else {
+                AttendeeFormView(
+                    firstName: "",
+                    lastName: "",
+                    clear: .constant(nil),
+                    isPresented: $isAttendeeFormPresented,
+                    onSubmit: { firstName, lastName, avatar in
+                        let newAttendee = Attendee(
+                            firstName: firstName,
+                            lastName: lastName,
+                            avatar: avatar,
+                            isHost: false)
+                        attendees.append(newAttendee)
+                    }
+                )
             }
         }
     }
