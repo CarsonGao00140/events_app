@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct EventsView: View {
+    @State var user: Attendee?
     @State var events: [Event]
     @State var isEventFormPresented = false
     
@@ -16,6 +17,12 @@ struct EventsView: View {
 }
 
 #Preview{
+    @Previewable @State var user = Attendee(
+        firstName: "User",
+        lastName: "1",
+        avatar: Image(systemName: "1.circle"),
+        isHost: true
+    )
     @Previewable @State var events = [
         Event(name: "Demo",
             startDate: Date(),
@@ -33,5 +40,5 @@ struct EventsView: View {
             isCancelled: false)
     ]
         
-    EventsView(events: events)
+    EventsView(user: user, events: events)
 }

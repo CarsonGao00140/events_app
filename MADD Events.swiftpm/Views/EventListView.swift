@@ -23,7 +23,12 @@ struct EventListView: View {
     private func edit(event: Event) {
         selectedEvent = event
         isEventFormPresented = true
-        print(selectedEvent as Any)
+    }
+    
+    private func toggleCancel(_ event: Event) {
+        if let index = events.firstIndex(where: { $0.id == event.id }) {
+            events[index].isCancelled.toggle()
+        }
     }
     
     private func remove(_ event: Event) {
@@ -38,10 +43,41 @@ struct EventListView: View {
                 Button("New Event", action: {
                     isEventFormPresented = true
                 })
-                ForEach(events) { event in
+                ForEach(events.filter { !$0.isCancelled }) { event in
                     /*@START_MENU_TOKEN@*/Text(event.name)/*@END_MENU_TOKEN@*/
                         .onTapGesture {
                             edit(event: event)
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                toggleCancel(event)
+                            } label: {
+                                Label("Cancel", systemImage: "person.fill.xmark")
+                            }
+                            .tint(.gray)
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                remove(event)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                }
+            }
+            Section() {
+                ForEach(events.filter { $0.isCancelled }) { event in
+                    Text(event.name)
+                        .onTapGesture {
+                            edit(event: event)
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                toggleCancel(event)
+                            } label: {
+                                Label("Undo Cancel", systemImage: "arrow.uturn.backward")
+                            }
+                            .tint(.gray)
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {

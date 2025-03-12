@@ -19,7 +19,7 @@ struct EventFormView: View {
     }
     
     var body: some View {
-        Form {
+        Group {
             Section() {
                 TextField("Title", text: $name)
                     .focused($isFocused)

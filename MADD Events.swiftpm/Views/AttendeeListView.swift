@@ -32,19 +32,11 @@ struct AttendeeListView: View {
             attendees.remove(at: index)
         }
     }
-    
-    var hosts: [Attendee] {
-        attendees.filter { $0.isHost }
-    }
 
-    var nonHosts: [Attendee] {
-        attendees.filter { !$0.isHost }
-    }
-    
     var body: some View {
         Group {
             Section() {
-                ForEach(hosts) { attendee in
+                ForEach(attendees.filter { $0.isHost }) { attendee in
                     let hasMultipleHosts = attendees.filter({ $0.isHost }).count > 1
                     Text("\(attendee.firstName) \(attendee.lastName)")
                         .onTapGesture {
@@ -76,7 +68,7 @@ struct AttendeeListView: View {
                 Button("New Attendee", action: {
                     isAttendeeFormPresented = true
                 })
-                ForEach(nonHosts) { attendee in
+                ForEach(attendees.filter { !$0.isHost }) { attendee in
                     Text("\(attendee.firstName) \(attendee.lastName)")
                         .onTapGesture {
                             edit(attendee: attendee)

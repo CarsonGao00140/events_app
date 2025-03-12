@@ -22,7 +22,7 @@ struct ContentView: View {
     var body: some View {
         TabView {
             Tab("Events", systemImage: "list.bullet") {
-                EventsView(events: events)
+                EventsView(user: user, events: events)
             }
             Tab("Profile", systemImage: "person.crop.circle") {
                 ProfileView(user: $user)
