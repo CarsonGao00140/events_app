@@ -23,7 +23,7 @@ struct EventsView: View {
             .padding()
             .sheet(isPresented: $isEventFormPresented) {
                 NavigationView {
-//                    EventFormView(user: $user, isPresented: $isEventFormPresented)
+                    EventFormView(user: $user, isPresented: $isEventFormPresented)
                }
             }
         }

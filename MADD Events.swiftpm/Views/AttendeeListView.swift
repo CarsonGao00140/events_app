@@ -3,8 +3,18 @@ import SwiftUI
 struct AttendeeListView: View {
     @Binding var attendees: [Attendee]
     
+    @State private var clearForm: (() -> Void)?
     @State private var selectedAttendee: Attendee?
     @State private var isAttendeeFormPresented = false
+    
+    private func add(firstName: String, lastName: String, avatar: Image) {
+        let newAttendee = Attendee(
+            firstName: firstName,
+            lastName: lastName,
+            avatar: avatar,
+            isHost: false)
+        attendees.append(newAttendee)
+    }
     
     private func edit(attendee: Attendee) {
         selectedAttendee = attendee
@@ -90,36 +100,38 @@ struct AttendeeListView: View {
             }
         }
         .sheet(isPresented: $isAttendeeFormPresented) {
-            if let index = attendees.firstIndex(where: { $0.id == selectedAttendee?.id }) {
-                AttendeeFormView(
-                    firstName: attendees[index].firstName,
-                    lastName: attendees[index].lastName,
-                    avatar: attendees[index].avatar,
-                    clear: .constant(nil),
-                    isPresented: $isAttendeeFormPresented,
-                    onSubmit: { firstName, lastName, avatar in
-                        attendees[index] = Attendee(
-                            firstName: firstName,
-                            lastName: lastName,
-                            avatar: avatar,
-                            isHost: attendees[index].isHost)
-                    }
-                )
-            } else {
-                AttendeeFormView(
-                    firstName: "",
-                    lastName: "",
-                    clear: .constant(nil),
-                    isPresented: $isAttendeeFormPresented,
-                    onSubmit: { firstName, lastName, avatar in
-                        let newAttendee = Attendee(
-                            firstName: firstName,
-                            lastName: lastName,
-                            avatar: avatar,
-                            isHost: false)
-                        attendees.append(newAttendee)
-                    }
-                )
+            NavigationView {
+                if let index = attendees.firstIndex(where: { $0.id == selectedAttendee?.id }) {
+                    AttendeeFormView(
+                        firstName: attendees[index].firstName,
+                        lastName: attendees[index].lastName,
+                        avatar: attendees[index].avatar,
+                        clear: $clearForm,
+                        isPresented: $isAttendeeFormPresented,
+                        onSubmit: { firstName, lastName, avatar in
+                            attendees[index] = Attendee(
+                                firstName: firstName,
+                                lastName: lastName,
+                                avatar: avatar,
+                                isHost: attendees[index].isHost)
+                        }
+                    )
+                } else {
+                    AttendeeFormView(
+                        firstName: "",
+                        lastName: "",
+                        clear: .constant(nil),
+                        isPresented: $isAttendeeFormPresented,
+                        onSubmit: { firstName, lastName, avatar in
+                            let newAttendee = Attendee(
+                                firstName: firstName,
+                                lastName: lastName,
+                                avatar: avatar,
+                                isHost: false)
+                            attendees.append(newAttendee)
+                        }
+                    )
+                }
             }
         }
     }

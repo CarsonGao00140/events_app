@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EventFormView: View {
-    @Binding var user: Attendee
+    @Binding var user: Attendee?
     @Binding var isPresented: Bool
     
     @State private var attendees: [Attendee] = []
@@ -22,6 +22,7 @@ struct EventFormView: View {
                     DatePicker("Starts", selection: $startDate, displayedComponents: .date)
                     DatePicker("Ends", selection: $endDate, in: startDate..., displayedComponents: .date)
                 }
+                AttendeeListView(attendees: $attendees)
                 Section() {
                     TextEditor(text: $notes)
                         .frame(height: 120)
@@ -39,16 +40,21 @@ struct EventFormView: View {
                     Button("Save") {}
                 }
             }
+            .onAppear {
+                if let user = user {
+                    attendees = [user]
+                }
+            }
         }
     }
 }
-//#Preview{
-//    let user = Attendee(
-//        firstName: "Carson",
-//        lastName: "Gao",
-//        avatar: Image(systemName: "person.crop.circle.dashed"),
-//        isHost: true
-//    )
-//        
-//    EventFormView(user: .constant(user), isPresented: .constant(true))
-//}
+#Preview{
+    let user = Attendee(
+        firstName: "Carson",
+        lastName: "Gao",
+        avatar: Image(systemName: "person.crop.circle.dashed"),
+        isHost: true
+    )
+        
+    EventFormView(user: .constant(user), isPresented: .constant(true))
+}

@@ -27,7 +27,6 @@ struct AttendeeFormView: View {
     }
 
     var body: some View {
-        NavigationView {
             VStack(spacing: 20) {
                 PhotosPicker(selection: $picked, matching: .images) {
                     if let avatarImage = avatar {
@@ -96,7 +95,6 @@ struct AttendeeFormView: View {
             .onChange(of: lastName, change)
             .onChange(of: avatar, change)
         }
-    }
 }
 
 #Preview {
