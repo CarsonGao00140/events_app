@@ -5,11 +5,26 @@ struct AttendeeFormView: View {
     @State var firstName: String
     @State var lastName: String
     @State var avatar: Image?
+    @Binding var clear: (() -> Void)?
     @Binding var isPresented: Bool
-    var onChange: (() -> Void)?
-    var onDone: ((String, String, Image?) -> Void)?
+    var onChange: ((String, String, Image?, Bool) -> Void)?
+    var onSubmit: ((String, String, Image?) -> Void)?
     
     @State private var picked: PhotosPickerItem?
+    
+    private var isComplete: Bool {
+        !(firstName.isEmpty || lastName.isEmpty || avatar == nil)
+    }
+    
+    private func change() {
+        onChange?(firstName, lastName, avatar, isComplete)
+    }
+    
+    private func clearAction() {
+        firstName = ""
+        lastName = ""
+        avatar = nil
+    }
 
     var body: some View {
         NavigationView {
@@ -60,13 +75,16 @@ struct AttendeeFormView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
-                        onDone?(firstName, lastName, avatar)
+                        onSubmit?(firstName, lastName, avatar)
                         isPresented = false
                     }
-                    .disabled(firstName.isEmpty || lastName.isEmpty || avatar == nil)
+                    .disabled(!isComplete)
                 }
             }
             .padding()
+            .onAppear{
+                clear = clearAction
+            }
             .onChange(of: picked) {
                 Task {
                     if let loaded = try? await picked?.loadTransferable(type: Image.self) {
@@ -74,28 +92,27 @@ struct AttendeeFormView: View {
                     }
                 }
             }
-            .onChange(of: firstName, onChange ?? {})
-            .onChange(of: lastName, onChange ?? {})
-            .onChange(of: avatar, onChange ?? {})
+            .onChange(of: firstName, change)
+            .onChange(of: lastName, change)
+            .onChange(of: avatar, change)
         }
     }
 }
 
 #Preview {
-    @Previewable @State var firstName: String = ""
-    @Previewable @State var lastName: String = ""
-    @Previewable @State var avatar: Image? = nil
+    @Previewable @State var clearForm: (() -> Void)?
     
     AttendeeFormView(
-        firstName: firstName,
-        lastName: lastName,
-        avatar: avatar,
+        firstName: "",
+        lastName: "",
+        clear: $clearForm,
         isPresented: .constant(true),
-        onChange: {
-            print("Change")
+        onChange: { firstName, lastName, avatar, complete in
+            print("Change: \(firstName), \(lastName), \(avatar), \(complete)")
         },
-        onDone: { _, _, _ in
-            print("Done")
+        onSubmit: { firstName, lastName, avatar in
+            print("Change: \(firstName), \(lastName), \(avatar)")
         }
     )
+    Button("🛠️ Clear", action: clearForm ?? {})
 }
