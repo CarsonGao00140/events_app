@@ -4,10 +4,10 @@ import PhotosUI
 struct AttendeeFormView: View {
     let onChange: (String, String, Image?) -> Void
     @Binding var clear: (() -> Void)?
-    @State private var firstName: String = ""
-    @State private var lastName: String = ""
-    @State private var avatar: Image? = nil
-    @State private var picked: PhotosPickerItem?
+    @State var firstName: String = ""
+    @State var lastName: String = ""
+    @State var avatar: Image? = nil
+    @State var picked: PhotosPickerItem?
 
     private func change() {
         onChange(firstName, lastName, avatar)
@@ -22,33 +22,31 @@ struct AttendeeFormView: View {
     var body: some View {
         VStack(spacing: 20) {
             PhotosPicker(selection: $picked, matching: .images) {
-                ZStack {
-                    if let avatarImage = avatar {
-                        avatarImage
-                            .resizable()
-                            .scaledToFill()
-                            .clipShape(Circle())
-                            .overlay(
-                                Button(action: {
-                                    avatar = nil
-                                }) {
-                                    Image(systemName: "trash")
-                                        .foregroundColor(.white)
-                                        .padding()
-                                        .background(Color.red)
-                                        .clipShape(Circle())
-                                }
-                                .padding(10),
-                                alignment: .bottomTrailing
-                            )
-                    } else {
-                        Image(systemName: "person.crop.circle")
-                            .resizable()
-                            .scaledToFill()
-                            .foregroundColor(.gray)
-                    }
+                if let avatarImage = avatar {
+                    avatarImage
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 240, height: 240)
+                        .clipShape(Circle())
+                        .overlay(
+                            Button(action: {
+                                avatar = nil
+                            }) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.red)
+                                    .clipShape(Circle())
+                            },
+                            alignment: .bottomTrailing
+                        )
+                } else {
+                    Image(systemName: "person.crop.circle")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 240, height: 240)
+                        .foregroundColor(.gray)
                 }
-                .frame(width: 300, height: 300)
             }
             .padding()
             
