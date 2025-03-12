@@ -10,9 +10,9 @@ struct ProfileView: View {
         NavigationStack {
             VStack(spacing: 20) {
                 AttendeeFormView(
-                    firstName: $firstName,
-                    lastName: $lastName,
-                    avatar: $avatar,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    avatar: user?.avatar,
                     isPresented: .constant(false),
                     onChange: {
                         if !(firstName.isEmpty || lastName.isEmpty || avatar == nil) {

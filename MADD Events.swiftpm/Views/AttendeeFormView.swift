@@ -2,9 +2,9 @@ import SwiftUI
 import PhotosUI
 
 struct AttendeeFormView: View {
-    @Binding var firstName: String
-    @Binding var lastName: String
-    @Binding var avatar: Image?
+    @State var firstName: String
+    @State var lastName: String
+    @State var avatar: Image?
     @Binding var isPresented: Bool
     var onChange: (() -> Void)?
     var onDone: ((String, String, Image?) -> Void)?
@@ -87,9 +87,9 @@ struct AttendeeFormView: View {
     @Previewable @State var avatar: Image? = nil
     
     AttendeeFormView(
-        firstName: $firstName,
-        lastName: $lastName,
-        avatar: $avatar,
+        firstName: firstName,
+        lastName: lastName,
+        avatar: avatar,
         isPresented: .constant(true),
         onChange: {
             print("Change")
