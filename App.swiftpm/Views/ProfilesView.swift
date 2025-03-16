@@ -5,31 +5,51 @@ struct ProfilesView: View {
     @State private var isFormPresented = false
     @State private var onFormSubmit: ((Profile) -> Void)?
     
-    private var userDatabase = UserDatabase.shared
-    private var othersDatabase = OthersDatabase.shared
+    private let profileDatabase = Database<Profile>.shared
+    private let userDatabase = UserDatabase.shared
+    
+    private var userProfile: (UUID, Profile)? {
+        userDatabase.read()
+    }
+    
+    private var otherProfiles: [(UUID, Profile)] {
+        var profiles = profileDatabase.readAll()
+        if let id = userProfile?.0 {
+            profiles.removeValue(forKey: id)
+        }
+        return profiles.sorted(by: { $0.key < $1.key })
+    }
+    
+    private func deleteButton(for id: UUID) -> some View {
+        Button(role: .destructive) {
+            _ = profileDatabase.delete(by: id)
+        } label: {
+            Label("Delete", systemImage: "trash")
+        }
+    }
     
     var body: some View {
         List {
             Section {
-                if let user = userDatabase.read() {
+                if let id = userProfile?.0, let user = userProfile?.1 {
                     Text("\(user.firstName) \(user.lastName)")
                         .onTapGesture {
                             selectedProfile = user
-                            onFormSubmit = userDatabase.write
+                            onFormSubmit = { newProfile in
+                                _ = userDatabase.write(newProfile)
+                            }
                             isFormPresented = true
                         }
                         .swipeActions(edge: .trailing) {
-                            Button(role: .destructive) {
-                                _ = userDatabase.delete()
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
+                            deleteButton(for: id)
                         }
                 } else {
                     Text("Add User")
                         .foregroundColor(.blue)
                         .onTapGesture {
-                            onFormSubmit = userDatabase.write
+                            onFormSubmit = { newProfile in
+                                _ = userDatabase.write(newProfile)
+                            }
                             isFormPresented = true
                         }
                 }
@@ -39,25 +59,22 @@ struct ProfilesView: View {
                     .foregroundColor(.blue)
                     .onTapGesture {
                         onFormSubmit = { profile in
-                            let _ = othersDatabase.create(profile)
+                            let _ = profileDatabase.create(profile)
                         }
                         isFormPresented = true
                     }
-                ForEach(othersDatabase.readAll(), id: \.0) { (id, other) in
+                
+                ForEach(otherProfiles, id: \.0) { (id, other) in
                     Text("\(other.firstName) \(other.lastName)")
                         .onTapGesture {
                             selectedProfile = other
                             onFormSubmit = { newProfile in
-                                _ = othersDatabase.update(by: id, newProfile)
+                                _ = profileDatabase.update(by: id, newProfile)
                             }
                             isFormPresented = true
                         }
                         .swipeActions(edge: .trailing) {
-                            Button(role: .destructive) {
-                                _ = othersDatabase.delete(by: id)
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
+                            deleteButton(for: id)
                         }
                 }
             }
@@ -70,7 +87,6 @@ struct ProfilesView: View {
                 initialProfile: selectedProfile,
                 onSubmit: { newProfile in
                     onFormSubmit?(newProfile)
-                    print(newProfile)
                 }
             )
         }

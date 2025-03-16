@@ -2,19 +2,23 @@ import Foundation
 
 @MainActor
 @Observable
-class UserDatabase {
+final class UserDatabase {
     static let shared = UserDatabase()
     private init() {}
     
-    private var user: Profile? = nil
-    
-    func write(_ profile: Profile) { user = profile }
-    
-    func read() -> Profile? { user }
-    
-    func delete() -> Bool {
-        guard user != nil else { return false }
-        user = nil
-        return true
+    private let profileDatabase = Database<Profile>.shared
+    private var id: UUID = UUID()
+
+    func write(_ profile: Profile) -> UUID {
+        if !profileDatabase.update(by: id, profile) {
+            id = profileDatabase.create(profile)
+        }
+        
+        return id
+    }
+
+    func read() -> (UUID, Profile)? {
+        guard let profile = profileDatabase.read(by: id) else { return nil }
+        return (id, profile)
     }
 }
