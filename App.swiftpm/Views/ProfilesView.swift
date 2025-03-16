@@ -15,12 +15,12 @@ struct ProfilesView: View {
                     Text("\(user.firstName) \(user.lastName)")
                         .onTapGesture {
                             selectedProfile = user
-                            onFormSubmit = userDatabase.update
+                            onFormSubmit = userDatabase.write
                             isFormPresented = true
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                userDatabase.delete()
+                                _ = userDatabase.delete()
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -29,32 +29,32 @@ struct ProfilesView: View {
                     Text("Add User")
                         .foregroundColor(.blue)
                         .onTapGesture {
-                            onFormSubmit = userDatabase.update
+                            onFormSubmit = userDatabase.write
                             isFormPresented = true
                         }
                 }
             }
-            
             Section {
                 Text("Add Others")
                     .foregroundColor(.blue)
                     .onTapGesture {
-                        onFormSubmit = othersDatabase.create
+                        onFormSubmit = { profile in
+                            let _ = othersDatabase.create(profile)
+                        }
                         isFormPresented = true
                     }
-                
-                ForEach(othersDatabase.readAll()) { other in
+                ForEach(othersDatabase.readAll(), id: \.0) { (id, other) in
                     Text("\(other.firstName) \(other.lastName)")
                         .onTapGesture {
                             selectedProfile = other
                             onFormSubmit = { newProfile in
-                                _ = othersDatabase.update(by: other.id, newProfile)
+                                _ = othersDatabase.update(by: id, newProfile)
                             }
                             isFormPresented = true
                         }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                _ = othersDatabase.deleteAttendee(by: other.id)
+                                _ = othersDatabase.delete(by: id)
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -67,9 +67,10 @@ struct ProfilesView: View {
         }) {
             ProfileFormView(
                 isPresented: $isFormPresented,
-                profile: selectedProfile,
+                initialProfile: selectedProfile,
                 onSubmit: { newProfile in
                     onFormSubmit?(newProfile)
+                    print(newProfile)
                 }
             )
         }

@@ -1,7 +1,6 @@
 import SwiftUI
 
-struct Profile: Identifiable, Equatable {
-    let id = UUID()
+struct Profile: Equatable {
     let firstName: String
     let lastName: String
     let avatarData: Data?

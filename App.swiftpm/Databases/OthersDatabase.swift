@@ -4,31 +4,27 @@ import Foundation
 @Observable
 class OthersDatabase {
     static let shared = OthersDatabase()
-    private var others: [Profile] = []
+    private init() {}
     
-    func create(_ profile: Profile) {
-        others.append(profile)
+    private var storage = [UUID: Profile]()
+    
+    func create(_ profile: Profile) -> UUID {
+        let id = UUID()
+        storage[id] = profile
+        return id
     }
     
-    func read(by id: UUID) -> Profile? {
-        others.first { $0.id == id }
+    func readAll() -> [(UUID, Profile)] {
+        Array(storage)
     }
-    
-    func readAll() -> [Profile] { others }
     
     func update(by id: UUID, _ profile: Profile) -> Bool {
-        if let index = others.firstIndex(where: { $0.id == id }) {
-            others[index] = profile
-            return true
-        }
-        return false
+        guard storage[id] != nil else { return false }
+        storage[id] = profile
+        return true
     }
-
-    func deleteAttendee(by id: UUID) -> Bool {
-        if let index = others.firstIndex(where: { $0.id == id }) {
-            others.remove(at: index)
-            return true
-        }
-        return false
+    
+    func delete(by id: UUID) -> Bool {
+        storage.removeValue(forKey: id) != nil
     }
 }

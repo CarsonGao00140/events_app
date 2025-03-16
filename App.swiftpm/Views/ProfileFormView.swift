@@ -8,20 +8,20 @@ struct ProfileFormView: View {
     @State private var avatarData: Data?
     @State private var photo: PhotosPickerItem?
 
-    private let initialProfile: Profile
+    private let profile: Profile
     private var submit: (Profile) -> Void
 
-    init(isPresented: Binding<Bool>, profile: Profile? = nil, onSubmit: @escaping (Profile) -> Void) {
+    init(isPresented: Binding<Bool>, initialProfile: Profile? = nil, onSubmit: @escaping (Profile) -> Void) {
         self._isPresented = isPresented
-        initialProfile = profile ?? .placeholder
-        _firstName = State(initialValue: initialProfile.firstName)
-        _lastName = State(initialValue: initialProfile.lastName)
-        _avatarData = State(initialValue: initialProfile.avatarData)
+        profile = initialProfile ?? .placeholder
+        _firstName = State(initialValue: profile.firstName)
+        _lastName = State(initialValue: profile.lastName)
+        _avatarData = State(initialValue: profile.avatarData)
         submit = onSubmit
     }
     
     private var isValid: Bool {
-        Profile.isValid(newProfile) && newProfile != initialProfile
+        Profile.isValid(newProfile) && newProfile != profile
     }
     
     private var newProfile: Profile {
