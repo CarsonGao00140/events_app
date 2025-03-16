@@ -1,19 +1,28 @@
 import SwiftUI
 
-struct Profile: Equatable {
+struct Profile: Identifiable, Equatable {
+    let id = UUID()
     let firstName: String
     let lastName: String
-    let avatar: Image
+    let avatarData: Data?
+    
+    var avatar: Image {
+        if let data = avatarData, let uiImage = UIImage(data: data) {
+            return Image(uiImage: uiImage)
+        } else {
+            return Image(systemName: "person.crop.circle")
+        }
+    }
     
     static func isValid(_ profile: Profile) -> Bool {
         !profile.firstName.isEmpty &&
         !profile.lastName.isEmpty &&
-        profile.avatar != self.placeholder.avatar
+        profile.avatarData != nil
     }
     
     static let placeholder: Self = .init(
         firstName: "",
         lastName: "",
-        avatar: Image(systemName: "person.crop.circle")
+        avatarData: nil
     )
 }

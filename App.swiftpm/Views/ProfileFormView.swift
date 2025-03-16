@@ -5,7 +5,7 @@ struct ProfileFormView: View {
     @Binding var isPresented: Bool
     @State private var firstName: String
     @State private var lastName: String
-    @State private var avatar: Image
+    @State private var avatarData: Data?
     @State private var photo: PhotosPickerItem?
 
     private let initialProfile: Profile
@@ -16,7 +16,7 @@ struct ProfileFormView: View {
         initialProfile = profile ?? .placeholder
         _firstName = State(initialValue: initialProfile.firstName)
         _lastName = State(initialValue: initialProfile.lastName)
-        _avatar = State(initialValue: initialProfile.avatar)
+        _avatarData = State(initialValue: initialProfile.avatarData)
         submit = onSubmit
     }
     
@@ -28,7 +28,7 @@ struct ProfileFormView: View {
         .init(
             firstName: firstName,
             lastName: lastName,
-            avatar: avatar
+            avatarData: avatarData
         )
     }
     
@@ -37,15 +37,16 @@ struct ProfileFormView: View {
             Form {
                 Section {
                     PhotosPicker(selection: $photo, matching: .images) {
-                        avatar
+                        newProfile.avatar
                             .resizable()
+                            .aspectRatio(contentMode: .fill)
                             .clipShape(Circle())
                             .frame(width: 240, height: 240)
                             .frame(maxWidth: .infinity)
                             .overlay(alignment: .bottomTrailing) {
-                                if avatar != Profile.placeholder.avatar {
+                                if avatarData != Profile.placeholder.avatarData {
                                     Button {
-                                        avatar = Profile.placeholder.avatar
+                                        avatarData = Profile.placeholder.avatarData
                                     } label: {
                                         Image(systemName: "arrow.counterclockwise.circle.fill")
                                             .font(.system(size: 32))
@@ -64,7 +65,7 @@ struct ProfileFormView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel", role: .destructive) {
+                    Button("Cancel", role: .cancel) {
                         isPresented = false
                     }
                     .foregroundColor(.red)
@@ -79,8 +80,8 @@ struct ProfileFormView: View {
             }
             .onChange(of: photo) {
                 Task {
-                    if let loaded = try await photo?.loadTransferable(type: Image.self) {
-                        avatar = loaded
+                    if let loaded = try await photo?.loadTransferable(type: Data.self) {
+                        avatarData = loaded
                     }
                 }
             }
@@ -90,6 +91,6 @@ struct ProfileFormView: View {
 
 #Preview {
     ProfileFormView(isPresented: .constant(true)) { newProfile in
-        print(newProfile as Any)
+        print(newProfile)
     }
 }

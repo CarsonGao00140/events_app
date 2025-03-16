@@ -1,16 +1,14 @@
 import Foundation
 
+@MainActor
 @Observable
 class UserDatabase {
     static let shared = UserDatabase()
+    private var user: Profile? = nil
     
-    private(set) var user: Profile? = nil
+    func read() -> Profile? { user }
     
-    func set(_ profile: Profile) {
-        user = profile
-    }
+    func update(_ profile: Profile) { user = profile }
     
-    func delete() {
-        user = nil
-    }
+    func delete() { user = nil }
 }
