@@ -32,12 +32,14 @@ struct ProfilesView: View {
         List {
             Section {
                 if let id = userProfile?.0, let profile = userProfile?.1 {
-                    Button("\(profile.firstName) \(profile.lastName)") {
+                    Button(action: {
                         selectedProfile = profile
                         onFormSubmit = { newProfile in
                             _ = userDatabase.write(newProfile)
                         }
                         isFormPresented = true
+                    }){
+                        ProfileRow(profile)
                     }
                     .foregroundColor(.primary)
                     .swipeActions(edge: .trailing) {
@@ -60,12 +62,14 @@ struct ProfilesView: View {
                     isFormPresented = true
                 }
                 ForEach(otherProfiles, id: \.0) { (id, profile) in
-                    Button("\(profile.firstName) \(profile.lastName)") {
+                    Button(action: {
                         selectedProfile = profile
                         onFormSubmit = { newProfile in
                             _ = profileDatabase.update(by: id, newProfile)
                         }
                         isFormPresented = true
+                    }){
+                        ProfileRow(profile)
                     }
                     .foregroundColor(.primary)
                     .swipeActions(edge: .trailing) {

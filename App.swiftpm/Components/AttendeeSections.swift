@@ -46,9 +46,16 @@ struct AttendeeSections: View {
                 ForEach(attendees, id: \.self) { id in
                     Group {
                         if let profile = readProfile(id) {
-                            Text("\(profile.firstName) \(profile.lastName)")
+                            ProfileRow(profile)
                         } else {
-                            Text("Deleted").foregroundColor(.gray)
+                            ProfileRow(
+                                Profile(
+                                    firstName: "Deleted",
+                                    lastName: "[\(id.uuidString.prefix(4))]",
+                                    avatarData: nil
+                                )
+                            )
+                            .foregroundColor(.gray)
                         }
                     }
                     .swipeActions(edge: .leading) {
