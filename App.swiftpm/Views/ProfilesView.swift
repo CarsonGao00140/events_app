@@ -1,33 +1,33 @@
 import SwiftUI
 
 struct ProfilesView: View {
-    @State private var selectedProfile: Profile?
+    @State private var selected: Profile = .placeholder
     @State private var isFormPresented = false
     @State private var onFormSubmit: ((Profile) -> Void)?
     
-    private let profileDatabase = Database<Profile>.shared
+    private let database = Database<Profile>.shared
     private let userDatabase = UserDatabase.shared
     
-    private var userProfile: (UUID, Profile)? { userDatabase.read() }
+    private var user: (UUID, Profile)? { userDatabase.read() }
     
-    private var otherProfiles: [(UUID, Profile)] {
-        var profiles = profileDatabase.readAll()
-        if let id = userProfile?.0 { profiles.removeValue(forKey: id) }
-        return profiles.sorted(by: { $0.key < $1.key })
+    private var other: [(UUID, Profile)] {
+        var profiles = database.readAll()
+        if let id = user?.0 { profiles.removeValue(forKey: id) }
+        return profiles.sorted(by: { $0.value.lastName < $1.value.lastName })
     }
     
     private func deleteButton(for id: UUID) -> some View {
         Button(role: .destructive) {
-            _ = profileDatabase.delete(by: id)
+            _ = database.delete(by: id)
         } label: { Label("Delete", systemImage: "trash") }
     }
     
     var body: some View {
         List {
             Section {
-                if let id = userProfile?.0, let profile = userProfile?.1 {
+                if let id = user?.0, let profile = user?.1 {
                     Button(action: {
-                        selectedProfile = profile
+                        selected = profile
                         onFormSubmit = { newProfile in
                             _ = userDatabase.write(newProfile)
                         }
@@ -48,16 +48,16 @@ struct ProfilesView: View {
             Section {
                 Button("Add Others") {
                     onFormSubmit = { newProfile in
-                        _ = profileDatabase.create(newProfile)
+                        _ = database.create(newProfile)
                     }
                     isFormPresented = true
                 }
                 
-                ForEach(otherProfiles, id: \.0) { (id, profile) in
+                ForEach(other, id: \.0) { (id, profile) in
                     Button(action: {
-                        selectedProfile = profile
+                        selected = profile
                         onFormSubmit = { newProfile in
-                            _ = profileDatabase.update(by: id, newProfile)
+                            _ = database.update(by: id, newProfile)
                         }
                         isFormPresented = true
                     }){ ProfileRow(profile) }
@@ -67,11 +67,11 @@ struct ProfilesView: View {
             }
         }
         .sheet(isPresented: $isFormPresented, onDismiss: {
-            selectedProfile = nil
+            selected = .placeholder
         }) {
             ProfileFormView(
                 isPresented: $isFormPresented,
-                initialProfile: selectedProfile,
+                profile: selected,
                 onSubmit: { newProfile in onFormSubmit?(newProfile) }
             )
         }

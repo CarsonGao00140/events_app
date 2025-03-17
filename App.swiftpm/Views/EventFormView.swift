@@ -13,9 +13,9 @@ struct EventFormView: View {
     private let event: Event
     private var submit: (Event) -> Void
     
-    init(isPresented: Binding<Bool>, initialEvent: Event? = nil, onSubmit: @escaping (Event) -> Void) {
+    init(isPresented: Binding<Bool>, event: Event, onSubmit: @escaping (Event) -> Void) {
         self._isPresented = isPresented
-        event = initialEvent ?? .placeholder
+        self.event = event
         _name = State(wrappedValue: event.name)
         _location = State(wrappedValue: event.location)
         _startDate = State(wrappedValue: event.startDate)
@@ -78,7 +78,7 @@ struct EventFormView: View {
 }
 
 #Preview {
-    EventFormView(isPresented: .constant(true)) { newEvent in
+    EventFormView(isPresented: .constant(true), event: .placeholder) { newEvent in
         print(newEvent)
     }
 }

@@ -10,8 +10,8 @@ struct AttendeeSections: View {
         let profiles = profileDatabase.readAll()
         let assigned = Set(hostAttendees + otherAttendees)
         return profiles
-            .filter { !assigned.contains($0.0) }
-            .sorted(by: { $0.0 < $1.0 })
+            .filter { !assigned.contains($0.key) }
+            .sorted(by: { $0.value.lastName < $1.value.lastName })
     }
 
     struct AttendeeSection: View {

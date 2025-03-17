@@ -11,9 +11,9 @@ struct ProfileFormView: View {
     private let profile: Profile
     private var submit: (Profile) -> Void
 
-    init(isPresented: Binding<Bool>, initialProfile: Profile? = nil, onSubmit: @escaping (Profile) -> Void) {
+    init(isPresented: Binding<Bool>, profile: Profile, onSubmit: @escaping (Profile) -> Void) {
         self._isPresented = isPresented
-        profile = initialProfile ?? .placeholder
+        self.profile = profile
         _firstName = State(wrappedValue: profile.firstName)
         _lastName = State(wrappedValue: profile.lastName)
         _avatarData = State(wrappedValue: profile.avatarData)
@@ -88,7 +88,7 @@ struct ProfileFormView: View {
 }
 
 #Preview {
-    ProfileFormView(isPresented: .constant(true)) { newProfile in
+    ProfileFormView(isPresented: .constant(true), profile: .placeholder) { newProfile in
         print(newProfile)
     }
 }
