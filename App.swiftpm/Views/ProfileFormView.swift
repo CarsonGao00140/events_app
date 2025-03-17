@@ -14,9 +14,9 @@ struct ProfileFormView: View {
     init(isPresented: Binding<Bool>, initialProfile: Profile? = nil, onSubmit: @escaping (Profile) -> Void) {
         self._isPresented = isPresented
         profile = initialProfile ?? .placeholder
-        _firstName = State(initialValue: profile.firstName)
-        _lastName = State(initialValue: profile.lastName)
-        _avatarData = State(initialValue: profile.avatarData)
+        _firstName = State(wrappedValue: profile.firstName)
+        _lastName = State(wrappedValue: profile.lastName)
+        _avatarData = State(wrappedValue: profile.avatarData)
         submit = onSubmit
     }
     

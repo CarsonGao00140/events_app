@@ -31,51 +31,46 @@ struct ProfilesView: View {
     var body: some View {
         List {
             Section {
-                if let id = userProfile?.0, let user = userProfile?.1 {
-                    Text("\(user.firstName) \(user.lastName)")
-                        .onTapGesture {
-                            selectedProfile = user
-                            onFormSubmit = { newProfile in
-                                _ = userDatabase.write(newProfile)
-                            }
-                            isFormPresented = true
-                        }
-                        .swipeActions(edge: .trailing) {
-                            deleteButton(for: id)
-                        }
-                } else {
-                    Text("Add User")
-                        .foregroundColor(.blue)
-                        .onTapGesture {
-                            onFormSubmit = { newProfile in
-                                _ = userDatabase.write(newProfile)
-                            }
-                            isFormPresented = true
-                        }
-                }
-            }
-            Section {
-                Text("Add Others")
-                    .foregroundColor(.blue)
-                    .onTapGesture {
-                        onFormSubmit = { profile in
-                            let _ = profileDatabase.create(profile)
+                if let id = userProfile?.0, let profile = userProfile?.1 {
+                    Button("\(profile.firstName) \(profile.lastName)") {
+                        selectedProfile = profile
+                        onFormSubmit = { newProfile in
+                            _ = userDatabase.write(newProfile)
                         }
                         isFormPresented = true
                     }
-                
-                ForEach(otherProfiles, id: \.0) { (id, other) in
-                    Text("\(other.firstName) \(other.lastName)")
-                        .onTapGesture {
-                            selectedProfile = other
-                            onFormSubmit = { newProfile in
-                                _ = profileDatabase.update(by: id, newProfile)
-                            }
-                            isFormPresented = true
+                    .foregroundColor(.primary)
+                    .swipeActions(edge: .trailing) {
+                        deleteButton(for: id)
+                    }
+                } else {
+                    Button("Add User") {
+                        onFormSubmit = { newProfile in
+                            _ = userDatabase.write(newProfile)
                         }
-                        .swipeActions(edge: .trailing) {
-                            deleteButton(for: id)
+                        isFormPresented = true
+                    }
+                }
+            }
+            Section {
+                Button("Add Others") {
+                    onFormSubmit = { newProfile in
+                        _ = profileDatabase.create(newProfile)
+                    }
+                    isFormPresented = true
+                }
+                ForEach(otherProfiles, id: \.0) { (id, profile) in
+                    Button("\(profile.firstName) \(profile.lastName)") {
+                        selectedProfile = profile
+                        onFormSubmit = { newProfile in
+                            _ = profileDatabase.update(by: id, newProfile)
                         }
+                        isFormPresented = true
+                    }
+                    .foregroundColor(.primary)
+                    .swipeActions(edge: .trailing) {
+                        deleteButton(for: id)
+                    }
                 }
             }
         }
