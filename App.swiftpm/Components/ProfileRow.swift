@@ -3,21 +3,18 @@ import SwiftUI
 struct ProfileRow: View {
     var profile: Profile
     
-    init(_ profile: Profile) {
-        self.profile = profile
-    }
+    init(_ profile: Profile) { self.profile = profile }
     
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 12) {
             profile.avatar
                 .resizable()
                 .scaledToFill()
                 .clipShape(Circle())
                 .overlay(Circle().stroke(.gray.opacity(0.3), lineWidth: 2))
                 .frame(width: 25, height: 25)
-            Spacer().frame(width: 5)
-            Text(profile.firstName)
-            Text(profile.lastName)
+            
+            Text("\(profile.firstName) \(profile.lastName)")
         }
     }
 }

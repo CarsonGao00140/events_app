@@ -20,9 +20,7 @@ struct ProfileFormView: View {
         submit = onSubmit
     }
     
-    private var isValid: Bool {
-        Profile.isValid(newProfile) && newProfile != profile
-    }
+    private var isValid: Bool { Profile.isValid(newProfile) && newProfile != profile }
     
     private var newProfile: Profile {
         .init(
@@ -54,8 +52,17 @@ struct ProfileFormView: View {
                                     .offset(x: -16, y: -16)
                                 }
                             }
-                    }       .listRowBackground(Color.clear)
+                    }
+                    .listRowBackground(Color.clear)
+                    .onChange(of: photo) {
+                        Task {
+                            if let loaded = try await photo?.loadTransferable(type: Data.self) {
+                                avatarData = loaded
+                            }
+                        }
+                    }
                 }
+                
                 Section {
                     TextField("First Name", text: $firstName)
                     TextField("Last Name", text: $lastName)
@@ -65,9 +72,7 @@ struct ProfileFormView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel", role: .cancel) {
-                        isPresented = false
-                    }
+                    Button("Cancel", role: .cancel) { isPresented = false }
                     .foregroundColor(.red)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -76,13 +81,6 @@ struct ProfileFormView: View {
                         isPresented = false
                     }
                     .disabled(!isValid)
-                }
-            }
-            .onChange(of: photo) {
-                Task {
-                    if let loaded = try await photo?.loadTransferable(type: Data.self) {
-                        avatarData = loaded
-                    }
                 }
             }
         }

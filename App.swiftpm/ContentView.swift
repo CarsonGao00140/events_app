@@ -6,6 +6,7 @@ struct ContentView: View {
             Tab("Events", systemImage: "calendar") {
                 EventsView()
             }
+            
             Tab("Profiles", systemImage: "person.2.fill") {
                 ProfilesView()
             }

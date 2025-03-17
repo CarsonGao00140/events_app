@@ -36,7 +36,7 @@ struct DatePickers: View {
         HStack {
             Text("Ends")
             
-            Spacer().frame(maxWidth: .infinity)
+            Spacer()
             
             if days != 0 {
                 Button(action: { end = nil }) {
@@ -47,8 +47,8 @@ struct DatePickers: View {
             
             ZStack {
                 DatePicker("Ends", selection: resolvedEnd, in: start..., displayedComponents: .date)
-                    .opacity(days != 0 ? 1 : 0.011)
                     .labelsHidden()
+                    .opacity(days != 0 ? 1 : 0.011)
                     .onChange(of: end) {
                         days = DatePickers.daysBetween(start: start, end: resolvedEnd.wrappedValue)
                         if days == 0 { end = nil }

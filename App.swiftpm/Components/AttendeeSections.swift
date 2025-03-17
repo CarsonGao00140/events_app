@@ -22,7 +22,6 @@ struct AttendeeSections: View {
         var moveButtonLabel: Label<Text, Image>
         var profiles: [(UUID, Profile)]
         var readProfile: (UUID) -> Profile?
-        var disableSwipe: Bool = false
         
         var body: some View {
             Section {
@@ -33,16 +32,14 @@ struct AttendeeSections: View {
                     Text("Select a Profile").tag(UUID?.none)
                     ForEach(profiles, id: \.0) { (id, profile) in
                         Text("\(profile.firstName) \(profile.lastName)").tag(id)
-                            .tint(.blue)
                     }
                 }
                 .disabled(profiles.isEmpty)
                 .onChange(of: selected) {
-                    if let id = selected {
-                        attendees.append(id)
-                    }
+                    if let id = selected { attendees.append(id) }
                     selected = nil
                 }
+                
                 ForEach(attendees, id: \.self) { id in
                     Group {
                         if let profile = readProfile(id) {
@@ -59,24 +56,20 @@ struct AttendeeSections: View {
                         }
                     }
                     .swipeActions(edge: .leading) {
-                        if !disableSwipe {
-                            Button {
-                                if let index = attendees.firstIndex(where: { $0 == id }) {
-                                    let id = attendees.remove(at: index)
-                                    destinationAttendees.append(id)
-                                }
-                            } label: { moveButtonLabel }
-                            .tint(.blue)
-                        }
+                        Button {
+                            if let index = attendees.firstIndex(where: { $0 == id }) {
+                                let id = attendees.remove(at: index)
+                                destinationAttendees.append(id)
+                            }
+                        } label: { moveButtonLabel }
+                        .tint(.blue)
                     }
                     .swipeActions(edge: .trailing) {
-                        if !disableSwipe {
-                            Button(role: .destructive) {
-                                attendees.removeAll { $0 == id }
-                            } label: {
-                                Label("Delete", systemImage: "trash")
+                        Button(role: .destructive) {
+                            if let index = attendees.firstIndex(where: { $0 == id }) {
+                                _ = attendees.remove(at: index)
                             }
-                        }
+                        } label: { Label("Delete", systemImage: "trash") }
                     }
                 }
             }
@@ -90,9 +83,9 @@ struct AttendeeSections: View {
             label: "Add Host",
             moveButtonLabel: Label("Move to Other", systemImage: "person.slash.fill"),
             profiles: unassignedProfiles,
-            readProfile: { id in profileDatabase.read(by: id) },
-            disableSwipe: hostAttendees.count == 1
+            readProfile: { id in profileDatabase.read(by: id) }
         )
+        
         AttendeeSection(
             attendees: $otherAttendees,
             destinationAttendees: $hostAttendees,

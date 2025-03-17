@@ -13,13 +13,9 @@ class Database<T> {
         return id
     }
     
-    func read(by id: UUID) -> T? {
-        storage[id]
-    }
+    func read(by id: UUID) -> T? { storage[id] }
     
-    func readAll() -> [UUID: T] {
-        return storage
-    }
+    func readAll() -> [UUID: T] { storage }
     
     func update(by id: UUID, _ value: T) -> Bool {
         guard storage[id] != nil else { return false }
@@ -32,10 +28,10 @@ class Database<T> {
     }
 }
 
-extension Database where T == Event {
-    static let shared = Database<Event>()
-}
-
 extension Database where T == Profile {
     static let shared = Database<Profile>()
+}
+
+extension Database where T == Event {
+    static let shared = Database<Event>()
 }

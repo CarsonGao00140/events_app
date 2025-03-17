@@ -8,24 +8,18 @@ struct ProfilesView: View {
     private let profileDatabase = Database<Profile>.shared
     private let userDatabase = UserDatabase.shared
     
-    private var userProfile: (UUID, Profile)? {
-        userDatabase.read()
-    }
+    private var userProfile: (UUID, Profile)? { userDatabase.read() }
     
     private var otherProfiles: [(UUID, Profile)] {
         var profiles = profileDatabase.readAll()
-        if let id = userProfile?.0 {
-            profiles.removeValue(forKey: id)
-        }
+        if let id = userProfile?.0 { profiles.removeValue(forKey: id) }
         return profiles.sorted(by: { $0.key < $1.key })
     }
     
     private func deleteButton(for id: UUID) -> some View {
         Button(role: .destructive) {
             _ = profileDatabase.delete(by: id)
-        } label: {
-            Label("Delete", systemImage: "trash")
-        }
+        } label: { Label("Delete", systemImage: "trash") }
     }
     
     var body: some View {
@@ -38,13 +32,9 @@ struct ProfilesView: View {
                             _ = userDatabase.write(newProfile)
                         }
                         isFormPresented = true
-                    }){
-                        ProfileRow(profile)
-                    }
+                    }){ ProfileRow(profile) }
                     .foregroundColor(.primary)
-                    .swipeActions(edge: .trailing) {
-                        deleteButton(for: id)
-                    }
+                    .swipeActions(edge: .trailing) { deleteButton(for: id) }
                 } else {
                     Button("Add User") {
                         onFormSubmit = { newProfile in
@@ -54,6 +44,7 @@ struct ProfilesView: View {
                     }
                 }
             }
+            
             Section {
                 Button("Add Others") {
                     onFormSubmit = { newProfile in
@@ -61,6 +52,7 @@ struct ProfilesView: View {
                     }
                     isFormPresented = true
                 }
+                
                 ForEach(otherProfiles, id: \.0) { (id, profile) in
                     Button(action: {
                         selectedProfile = profile
@@ -68,13 +60,9 @@ struct ProfilesView: View {
                             _ = profileDatabase.update(by: id, newProfile)
                         }
                         isFormPresented = true
-                    }){
-                        ProfileRow(profile)
-                    }
+                    }){ ProfileRow(profile) }
                     .foregroundColor(.primary)
-                    .swipeActions(edge: .trailing) {
-                        deleteButton(for: id)
-                    }
+                    .swipeActions(edge: .trailing) { deleteButton(for: id) }
                 }
             }
         }
@@ -84,9 +72,7 @@ struct ProfilesView: View {
             ProfileFormView(
                 isPresented: $isFormPresented,
                 initialProfile: selectedProfile,
-                onSubmit: { newProfile in
-                    onFormSubmit?(newProfile)
-                }
+                onSubmit: { newProfile in onFormSubmit?(newProfile) }
             )
         }
     }
