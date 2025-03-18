@@ -18,10 +18,10 @@ struct AttendeeSections: View {
         @Binding var attendees: [UUID]
         @Binding var destinationAttendees: [UUID]
         @State private var selected: UUID?
-        var label: String
-        var moveButtonLabel: Label<Text, Image>
-        var profiles: [(UUID, Profile)]
-        var readProfile: (UUID) -> Profile?
+        let label: String
+        let moveButtonLabel: Label<Text, Image>
+        let profiles: [(UUID, Profile)]
+        let readProfile: (UUID) -> Profile?
         
         var body: some View {
             Section {

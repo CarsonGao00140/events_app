@@ -9,7 +9,7 @@ struct ProfileFormView: View {
     @State private var photo: PhotosPickerItem?
 
     private let profile: Profile
-    private var submit: (Profile) -> Void
+    private let submit: (Profile) -> Void
 
     init(isPresented: Binding<Bool>, profile: Profile, onSubmit: @escaping (Profile) -> Void) {
         self._isPresented = isPresented

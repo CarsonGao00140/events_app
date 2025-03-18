@@ -5,8 +5,6 @@ struct EventsView: View {
     @State private var isFormPresented = false
     @State private var onFormSubmit: ((Event) -> Void)?
     
-    @State private var selectedSegment = 0
-    
     private let database = Database<Event>.shared
     
     private var events: (upcoming: [(UUID, Event)], expired: [(UUID, Event)], canceled: [(UUID, Event)]) {
@@ -38,7 +36,7 @@ struct EventsView: View {
     }
     
     @ViewBuilder
-    private func eventSection(title: String, events: [(UUID, Event)], isCanceled: Bool) -> some View {
+    private func eventSection(title: String, events: [(UUID, Event)], isCanceled: Bool = false) -> some View {
         if !events.isEmpty {
             Section(title) {
                 ForEach(events, id: \.0) { (id, event) in
@@ -89,8 +87,8 @@ struct EventsView: View {
                     isFormPresented = true
                 }
             }
-            eventSection(title: "Upcoming", events: events.upcoming, isCanceled: false)
-            eventSection(title: "Expired", events: events.expired, isCanceled: false)
+            eventSection(title: "Upcoming", events: events.upcoming)
+            eventSection(title: "Expired", events: events.expired)
             eventSection(title: "Canceled", events: events.canceled, isCanceled: true)
         }
         .sheet(isPresented: $isFormPresented, onDismiss: {
