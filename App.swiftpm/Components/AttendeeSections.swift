@@ -98,7 +98,7 @@ struct AttendeeSections: View {
 }
 
 #Preview {
-    @Previewable @State var hostAttendees: [UUID] = []
+    @Previewable @State var hostAttendees: [UUID] = Array(0..<5).map { _ in UUID() }
     @Previewable @State var otherAttendees: [UUID] = []
     
     Form {

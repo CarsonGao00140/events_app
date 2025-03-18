@@ -37,14 +37,14 @@ struct ProfileFormView: View {
                     PhotosPicker(selection: $photo, matching: .images) {
                         newProfile.avatar
                             .resizable()
-                            .aspectRatio(contentMode: .fill)
+                            .scaledToFill()
                             .clipShape(Circle())
                             .frame(width: 240, height: 240)
                             .frame(maxWidth: .infinity)
                             .overlay(alignment: .bottomTrailing) {
-                                if avatarData != Profile.placeholder.avatarData {
+                                if avatarData != profile.avatarData {
                                     Button {
-                                        avatarData = Profile.placeholder.avatarData
+                                        avatarData = profile.avatarData
                                     } label: {
                                         Image(systemName: "arrow.counterclockwise.circle.fill")
                                             .font(.system(size: 32))
@@ -56,8 +56,8 @@ struct ProfileFormView: View {
                     .listRowBackground(Color.clear)
                     .onChange(of: photo) {
                         Task {
-                            if let loaded = try await photo?.loadTransferable(type: Data.self) {
-                                avatarData = loaded
+                            if let data = try await photo?.loadTransferable(type: Data.self) {
+                                avatarData = data
                             }
                         }
                     }
@@ -73,8 +73,9 @@ struct ProfileFormView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel", role: .cancel) { isPresented = false }
-                    .foregroundColor(.red)
+                        .foregroundColor(.red)
                 }
+                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
                         submit(newProfile)

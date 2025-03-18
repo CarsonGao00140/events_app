@@ -7,9 +7,9 @@ struct Profile: Equatable {
     
     var avatar: Image {
         if let data = avatarData, let uiImage = UIImage(data: data) {
-            return Image(uiImage: uiImage)
+            Image(uiImage: uiImage)
         } else {
-            return Image(systemName: "person.crop.circle")
+            Image(systemName: "person.crop.circle")
         }
     }
     

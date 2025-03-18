@@ -8,12 +8,16 @@ struct ProfilesView: View {
     private let database = Database<Profile>.shared
     private let userDatabase = UserDatabase.shared
     
-    private var user: (UUID, Profile)? { userDatabase.read() }
-    
-    private var other: [(UUID, Profile)] {
+    private var profiles: (user: (UUID, Profile)?, others: [(UUID, Profile)]) {
+        let user = userDatabase.read()
         var profiles = database.readAll()
-        if let id = user?.0 { profiles.removeValue(forKey: id) }
-        return profiles.sorted(by: { $0.value.lastName < $1.value.lastName })
+        
+        if let id = user?.0 {
+            profiles.removeValue(forKey: id)
+        }
+        return (
+            user, profiles.sorted { $0.value.lastName < $1.value.lastName }
+        )
     }
     
     private func deleteButton(for id: UUID) -> some View {
@@ -25,7 +29,7 @@ struct ProfilesView: View {
     var body: some View {
         List {
             Section {
-                if let id = user?.0, let profile = user?.1 {
+                if let id = profiles.user?.0, let profile = profiles.user?.1 {
                     Button(action: {
                         selected = profile
                         onFormSubmit = { newProfile in
@@ -53,7 +57,7 @@ struct ProfilesView: View {
                     isFormPresented = true
                 }
                 
-                ForEach(other, id: \.0) { (id, profile) in
+                ForEach(profiles.others, id: \.0) { (id, profile) in
                     Button(action: {
                         selected = profile
                         onFormSubmit = { newProfile in

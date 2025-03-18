@@ -15,7 +15,6 @@ struct EventsView: View {
             expired: [(UUID, Event)](),
             canceled: [(UUID, Event)]()
         )){ acc, eventEntry in
-
             if eventEntry.value.isCanceled {
                 acc.canceled.append(eventEntry)
             } else {
@@ -63,8 +62,8 @@ struct EventsView: View {
                                 _ = database.update(by: id, newEvent)
                             } label: {
                                 isCanceled
-                                ? Label("Cancel", systemImage: "tray.and.arrow.up.fill")
-                                : Label("Undo Cancel", systemImage: "tray.and.arrow.down.fill")
+                                    ? Label("Cancel", systemImage: "tray.and.arrow.up.fill")
+                                    : Label("Undo Cancel", systemImage: "tray.and.arrow.down.fill")
                             }
                         }
                         .swipeActions(edge: .trailing) {
@@ -87,6 +86,7 @@ struct EventsView: View {
                     isFormPresented = true
                 }
             }
+            
             eventSection(title: "Upcoming", events: events.upcoming)
             eventSection(title: "Expired", events: events.expired)
             eventSection(title: "Canceled", events: events.canceled, isCanceled: true)

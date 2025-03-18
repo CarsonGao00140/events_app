@@ -63,8 +63,9 @@ struct EventFormView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel", role: .cancel) { isPresented = false }
-                    .foregroundColor(.red)
+                        .foregroundColor(.red)
                 }
+                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") {
                         submit(newEvent)

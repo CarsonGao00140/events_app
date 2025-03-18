@@ -21,10 +21,7 @@ struct DatePickers: View {
     }
     
     private var resolvedEnd: Binding<Date> {
-        Binding(
-            get: { end ?? start },
-            set: { newEnd in end = newEnd }
-        )
+        Binding(get: { end ?? start }, set: { newEnd in end = newEnd })
     }
     
     var body: some View {
@@ -57,7 +54,7 @@ struct DatePickers: View {
                 if days == 0 {
                     Text("None")
                         .foregroundColor(.blue)
-                        .padding(.leading, -41.4)
+                        .padding(.leading, -50)
                         .allowsHitTesting(false)
                 }
             }
@@ -73,6 +70,7 @@ struct DatePickers: View {
         Section {
             DatePickers(start: $startDate, end: $endDate)
         }
+        
         Section {
             Text("\(startDate)")
             Text("\(String(describing: endDate))")

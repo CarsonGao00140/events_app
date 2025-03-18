@@ -4,8 +4,8 @@ import Foundation
 @Observable
 final class UserDatabase {
     static let shared = UserDatabase()
-    private init() {}
     
+    private init() {}
     private let profileDatabase = Database<Profile>.shared
     private var id: UUID = UUID()
 

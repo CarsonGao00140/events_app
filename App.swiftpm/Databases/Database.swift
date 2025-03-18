@@ -4,7 +4,6 @@ import Foundation
 @Observable
 class Database<T> {
     private init() {}
-    
     private var storage = [UUID: T]()
     
     func create(_ value: T) -> UUID {
