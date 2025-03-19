@@ -42,7 +42,7 @@ struct ProfileFormView: View {
                             .frame(width: 240, height: 240)
                             .frame(maxWidth: .infinity)
                             .overlay(alignment: .bottomTrailing) {
-                                if avatarData != profile.avatarData {
+                                if profile.avatarData != nil && avatarData != profile.avatarData {
                                     Button {
                                         avatarData = profile.avatarData
                                     } label: {
